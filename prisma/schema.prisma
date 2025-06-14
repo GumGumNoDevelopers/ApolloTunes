@@ -14,23 +14,25 @@ datasource db {
 }
 
 model SongFile {
-  id        Int     @id @default(autoincrement())
-  path      String  @unique
-  name      String
-  hash      String
-  
-    // Metadata fields
-  title     String?
-  artist    String?
-  album     String?
-  year      Int?
-  duration  Float?
+  id   Int    @id @default(autoincrement())
+  path String @unique
+  name String
+  hash String
+
+  // Metadata fields
+  title    String?
+  artist   String?
+  album    String?
+  year     Int?
+  duration Float?
 
   // Format fields
-  formatType     String?   // e.g., codec
-  bitrate        Int?      // store as integer (bits per second)
-  lossless       Boolean
-  sampleRate     Int?      // store as integer (Hz)
+  formatType String? // e.g., codec
+  bitrate    Int? // store as integer (bits per second)
+  lossless   Boolean
+  sampleRate Int? // store as integer (Hz)
+
+  isDuplicate Boolean @default(false)
 
   @@map("song_files")
 }

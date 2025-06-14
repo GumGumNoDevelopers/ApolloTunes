@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Container,
   Typography,
   Box,
   TextField,
@@ -29,7 +28,7 @@ const DownloadListTab: React.FC = () => {
   };
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <>
       <Typography variant="h6" gutterBottom>
         Songs Download List
       </Typography>
@@ -68,7 +67,7 @@ const DownloadListTab: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Container>
+    </>
   );
 };
 

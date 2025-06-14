@@ -1,6 +1,9 @@
 import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify";
 import { scanDirectory } from "../service/scan";
-import * as util from "../../shared/util/conveter";
+import { markDuplicates } from "../service/duplicate";
+import { SongFile } from "@prisma/client";
+
+export type SongFileInput = Omit<SongFile, "id">;
 
 export default async function apiRoutes(
   fastify: FastifyInstance,
@@ -14,7 +17,7 @@ export default async function apiRoutes(
 
     // insert new songs
     await fastify.prisma.songFile.createMany({
-      data: rescanList.map(song => util.toDbSongModel(song))
+      data: markDuplicates(rescanList)
     });
   });
 

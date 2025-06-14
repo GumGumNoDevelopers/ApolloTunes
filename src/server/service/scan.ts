@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "node:path";
 import { createHash } from "crypto";
 import { IAudioMetadata, parseFile } from "music-metadata";
-import { Song } from "../../shared/models/Song";
+import { SongFileInput } from "../routes/api";
 
 async function calculateFileHash(filePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -15,9 +15,9 @@ async function calculateFileHash(filePath: string): Promise<string> {
   });
 }
 
-export async function scanDirectory(dir: string): Promise<Song[]> {
+export async function scanDirectory(dir: string): Promise<SongFileInput[]> {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const result: any[] = [];
+  const result: SongFileInput[] = [];
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
@@ -36,26 +36,20 @@ export async function scanDirectory(dir: string): Promise<Song[]> {
             path: fullPath,
             name: entry.name,
             hash: hash,
-            metadata: {
-              title: metadata.common.title || entry.name,
-              artist: metadata.common.artist,
-              album: metadata.common.album,
-              year: metadata.common.year,
-              duration: metadata.format.duration,
-            },
-            format: {
-              type: metadata.format.codec || "unknown",
-              bitrate: metadata.format.bitrate || "unknown",
-              lossless: metadata.format.lossless || false,
-              sampleRate: metadata.format.sampleRate || "unknown",
-            }
+            title: metadata.common.title || entry.name,
+            artist: metadata.common.artist,
+            album: metadata.common.album,
+            year: metadata.common.year,
+            duration: metadata.format.duration,
+            bitrate: metadata.format.bitrate || -1,
+            lossless: metadata.format.lossless || false,
+            sampleRate: metadata.format.sampleRate || 1,
+            isDuplicate: false,
+            formatType: metadata.format.codec || "unknown",
           });
         } catch (e) {
-          result.push({
-            path: fullPath,
-            name: entry.name,
-            metadata: { error: "Failed to read metadata" },
-          });
+          console.error(`Error processing file ${fullPath}:`, e);
+          // Optionally, you can log the error or handle it as needed
         }
       }
     }
