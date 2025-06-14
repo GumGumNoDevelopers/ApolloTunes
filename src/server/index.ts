@@ -1,11 +1,13 @@
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import apiRoutes from './routes/api';
+import prisma from './plugins/prisma';
 
 const fastify = Fastify({ logger: true });
 
 // Register API routes
-fastify.register(apiRoutes);
+fastify.register(prisma)
+fastify.register(apiRoutes, { prefix: "/api" });
 
 require('dotenv').config();
 

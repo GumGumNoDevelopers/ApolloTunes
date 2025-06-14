@@ -1,2 +1,14 @@
+# node
 node_modules
 .env
+dist
+build
+/public/client
+
+# database
+/prisma/dev.db
+/prisma/dev.db-journal
+/src/generated/prisma
+
+# ide
+.vscode
