@@ -4,6 +4,9 @@ import { createHash } from "crypto";
 import { IAudioMetadata, parseFile } from "music-metadata";
 import { SongFileInput } from "../routes/api";
 
+// Simple cache object (replace with persistent storage for production)
+const folderCache: Record<string, { mtimeMs: number; result: SongFileInput[] }> = {};
+
 async function calculateFileHash(filePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const hash = createHash("sha256");
@@ -16,6 +19,14 @@ async function calculateFileHash(filePath: string): Promise<string> {
 }
 
 export async function scanDirectory(dir: string): Promise<SongFileInput[]> {
+  const stat = fs.statSync(dir);
+  const cacheEntry = folderCache[dir];
+
+  // If folder has not changed, return cached result
+  if (cacheEntry && cacheEntry.mtimeMs === stat.mtimeMs) {
+    return cacheEntry.result;
+  }
+
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   const result: SongFileInput[] = [];
 
@@ -49,11 +60,12 @@ export async function scanDirectory(dir: string): Promise<SongFileInput[]> {
           });
         } catch (e) {
           console.error(`Error processing file ${fullPath}:`, e);
-          // Optionally, you can log the error or handle it as needed
         }
       }
     }
   }
 
+  // Update cache
+  folderCache[dir] = { mtimeMs: stat.mtimeMs, result };
   return result;
 }

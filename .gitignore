@@ -3,7 +3,8 @@ node_modules
 .env
 dist
 build
-/public/client
+/public/client/index.js
+/public/client/index.js.map
 
 # database
 /prisma/dev.db

@@ -36,3 +36,11 @@ model SongFile {
 
   @@map("song_files")
 }
+
+model DownloadSong {
+  id     Int    @id @default(autoincrement())
+  title  String
+  artist String
+
+  @@map("download_songs")
+}
